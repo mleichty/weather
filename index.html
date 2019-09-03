@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Extreme Weather Records by State </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="styles.css" rel="stylesheet" type="text/css"/>
+        <script src="loadJSONDoc.js" type="text/javascript"></script>
+        <script>
+            /* Handle window onload event. It loads a local json file and registers the onchange event handler 
+             * of the selection list. When an item is selected, use an anonymous function to call the display method.
+             */
+            window.onload = function () {
+                //get the JSON object defined in the local JSON document
+                var extremesTxt = loadJSON('extremes.json');
+                //register the onchange event handler with the selection list so that when a 
+                //new option is selected, the display method gets called
+                document.getElementById("states").addEventListener("change", function () {
+                    //need to create an array that stores the state options in an array and find which one is selected
+                    var state = this.options[this.selectedIndex].text;
+                    display(state, extremesTxt);
+                });
+            };
+
+            /* This function takes the state and the json object as the parameters. 
+             * It filters the json document with the state and then appends a row to
+             *  the table for each extreme weather record.
+             */
+            function display(state, extremesTxt) {
+
+                //parse the extremes.json
+                var extremesObj = JSON.parse(extremesTxt);
+                //console.log(extremesObj);
+                
+                //retrieve the value that is associated with the name "dataCollection"
+                var extremes = extremesObj.dataCollection;
+                //console.log(extremes);
+                
+                //create the header row for each data point
+                var row = '<tr><th>State</th><th>Element</th><th>Notes</th><th>Value</th><th>Date</th><th>Location</th><th>Station</th></tr>';
+                
+                //create a for loop to loop through all the states
+                for (var i = 0; i < extremes.length; i++) {
+
+                    //add data point to variables, then rows, then append the rows to table in HTML
+                    if (state === extremes[i].state) {
+                        var state = extremes[i].state;
+                        var element = extremes[i].element;
+                        var notes = extremes[i].notes;
+                        var value = extremes[i].value;
+                        var units = extremes[i].units;
+                        var date = extremes[i].date;
+                        var location = extremes[i].location;
+                        var station = extremes[i].station;
+                        var status = extremes[i].status;
+                        
+                        //change the units from degrees F to degree-symbol
+                        //and if the units isn't in degrees, needs to be " instead of inches
+                        if (units == "degrees F") {
+                            units = "&#8457";
+                        } else if (units == "inches") {
+                            units = '"';
+                        };
+
+                        //create a table
+                        //create rows that contain html that will be appended once state is called
+                        row += "<tr>";
+                        row += "<td>" + state + "</td>";
+                        row += "<td>" + element + "</td>";
+                        row += "<td>" + notes + "</td>";
+                        row += "<td>" + value + " " + units + "</td>";
+                        row += "<td>" + date + "</td>";
+                        row += "<td>" + location + "</td>";
+                        row += "<td>" + station + "</td>";
+                        //row += "<td>" + status + "</td>";
+                        row += "</tr>";
+
+                        //append the new table to the extremes div
+                        document.getElementById('extremes').innerHTML = row;
+                    }
+                }
+            }
+
+        </script>
+    </head>
+    <body>
+        <h2>Extreme Weather Records by State</h2>
+
+        Select a State: 
+        <!-- the selection list of all 50 states -->
+        <select id="states">
+            <option value="" selected="selected" disabled="disabled">Select a State</option>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="DC">District Of Columbia</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+        </select>
+
+        <!-- this table displays the extreme weather records   -->
+        <table id="extremes"></table>
+    </body>
+</html>
